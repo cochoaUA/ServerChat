@@ -82,6 +82,9 @@ public class ChatClientGUI extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO send messages to server
+			// get message
+			String text = messageField.getText();
+			messageField.setText("");
 
 		}
 
