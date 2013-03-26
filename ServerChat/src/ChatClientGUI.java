@@ -11,7 +11,9 @@ public class ChatClientGUI extends JFrame{
 
 	
 	private JTextArea chatArea = new JTextArea();
-	private JTextField messageField = new JTextField();
+	private JTextField messageField = new JTextField("Replace me with your name");
+	
+	private String userName;
 	
 	public static void main(String [] args){
 		JFrame gui = new ChatClientGUI();
@@ -28,22 +30,29 @@ public class ChatClientGUI extends JFrame{
 	 */
 	private void setUpListeners() {
 		// TODO 1:46:48 PM complete this method
-		SendMessageListener listener = new SendMessageListener();
+		GetUserNameListener listener1 = new GetUserNameListener();
+		messageField.addActionListener(listener1);
+		
 	}
 
 	/**
 	 * 
 	 */
 	private void layoutView() {
-		// TODO 1:46:45 PM complete this method
+		// GUI layout
 		this.setTitle("Chat Client");
 		this.setSize(500, 500);
-		
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		this.add(messageField, BorderLayout.NORTH);
-		this.add(chatArea, BorderLayout.CENTER);
+		// message Field
+		getContentPane().add(messageField, BorderLayout.NORTH);
+		
+		// chat Area
+		chatArea.setLineWrap(true);
+		chatArea.setWrapStyleWord(true);
+		chatArea.setEditable(false);
+		getContentPane().add(chatArea, BorderLayout.CENTER);
 		
 	}
 	
@@ -55,6 +64,27 @@ public class ChatClientGUI extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO 2:34:01 PM complete this method
+			
+		}
+		
+	}
+	
+	private class GetUserNameListener implements ActionListener{
+
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO 2:34:01 PM complete this method
+			
+			userName = messageField.getText();
+			messageField.setText("");
+			
+			SendMessageListener listener = new SendMessageListener();
+			messageField.removeActionListener(messageField.getActionListeners()[0]);
+			messageField.addActionListener(listener);
+			
 			
 		}
 		
