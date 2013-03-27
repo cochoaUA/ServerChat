@@ -1,3 +1,19 @@
+/*=============================================================================
+ | Assignment: Program #5
+ | Authors: Carlton Ochoa (cochoa@email.arizona.edu)
+ | 			Haziel Zuniga (zuniga7@email.arizona.edu)
+ |
+ | Grader: Rohit
+ | Course: 335
+ | Instructor: R. Mercer
+ | Due Date: Tuesday April 2, 2013 at 3:00
+ |
+ | Description: This class simulates our server.
+ |
+ *===========================================================================*/
+
+
+
 package Server;
 import java.io.IOException;
 import java.net.ServerSocket;
