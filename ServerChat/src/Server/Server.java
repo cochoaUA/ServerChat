@@ -20,12 +20,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
 
+import ClientView.ChatClientGUI;
+
 public class Server implements Runnable {
 
 	private ServerSocket myServerSocket;
 	private Vector<String> connectedClients;
 
-	public final static int PORT_NUMBER = 4000;
+	public final static int PORT_NUMBER = 4009;
 
 	public static void main(String args[]) {
 
@@ -51,8 +53,8 @@ public class Server implements Runnable {
 		try {
 			while (true) {
 				Socket intoServer = myServerSocket.accept();
-				ConnectionThreadForEachClient aThreadForOneClient = new ConnectionThreadForEachClient(
-						intServer, connectedClients);
+				ChatClientGUI aThreadForOneClient = new ChatClientGUI(
+						intoServer, connectedClients);
 
 				Thread thread = new Thread(aThreadForOneClient);
 				thread.start();
