@@ -153,6 +153,7 @@ public class ChatClientGUI extends JFrame implements Runnable {
 				// outputStream.reset();
 				outputStream.writeObject(userName + " has connected!");
 			} catch (IOException e) {
+				System.out.println("Error writing to outputStream");
 				e.printStackTrace();
 			}
 
@@ -188,7 +189,9 @@ public class ChatClientGUI extends JFrame implements Runnable {
 		while (true) {
 
 			try {
-				inputStream.readObject();
+				String message = (String) inputStream.readObject();
+				chatArea.append(message);
+								
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
