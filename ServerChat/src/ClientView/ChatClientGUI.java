@@ -1,4 +1,5 @@
 package ClientView;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -6,6 +7,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
@@ -39,19 +42,36 @@ public class ChatClientGUI extends JFrame implements Runnable {
 	private ObjectInputStream inputStream; // to server
 	private ObjectOutputStream outputStream; // from server
 	private Socket clientSocket;
+	private Vector<String> sharedCollectionReference;
+
+	private boolean firstTimeOpening = true;
 
 	public static void main(String[] args) {
-		JFrame gui = new ChatClientGUI(null); // null?? or clientSocket
-		gui.setVisible(true);
+		try {
+			JFrame gui = new ChatClientGUI(new Socket(HOST_NAME, PORT_NUMBER), null);
+			gui.setVisible(true);
+
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
-	public ChatClientGUI(Socket socketFromServer) {
+	public ChatClientGUI(Socket socketFromServer, Vector<String> sharedCollectionReference1) {
 		// sockets
 		clientSocket = socketFromServer;
+		sharedCollectionReference = sharedCollectionReference1;
 
 		// GUI
-		layoutView();
-		setUpListeners();
+		if (firstTimeOpening) {
+			layoutView();
+			setUpListeners();
+			firstTimeOpening = false;
+		}
 	}
 
 	/**
@@ -102,6 +122,13 @@ public class ChatClientGUI extends JFrame implements Runnable {
 			String text = messageField.getText();
 			messageField.setText("");
 
+			// write message to outputStream
+			try {
+				// outputStream.reset();
+				outputStream.writeObject(userName + ": " + text);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 	}
@@ -121,7 +148,13 @@ public class ChatClientGUI extends JFrame implements Runnable {
 			userName = messageField.getText();
 			messageField.setText("");
 
-			// stuff....
+			// write message to outputStream
+			try {
+				// outputStream.reset();
+				outputStream.writeObject(userName + " has connected!");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
 			// change listener for messageField
 			SendMessageListener listener = new SendMessageListener();
@@ -153,6 +186,16 @@ public class ChatClientGUI extends JFrame implements Runnable {
 
 		// stay connected
 		while (true) {
+
+			try {
+				inputStream.readObject();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 			if (true) // want to end connection
 				break;
@@ -160,6 +203,7 @@ public class ChatClientGUI extends JFrame implements Runnable {
 
 		// close connection
 		try {
+			outputStream.writeObject(userName + " has disconnected!");
 			clientSocket.close();
 			inputStream.close();
 			outputStream.close();
