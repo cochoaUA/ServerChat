@@ -1,6 +1,11 @@
+package ClientView;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
@@ -20,7 +25,7 @@ import javax.swing.JTextField;
  |
  *===========================================================================*/
 
-public class ChatClientGUI extends JFrame {
+public class ChatClientGUI extends JFrame implements Runnable {
 
 	private JTextArea chatArea = new JTextArea();
 	private JTextField messageField = new JTextField(
@@ -28,12 +33,23 @@ public class ChatClientGUI extends JFrame {
 
 	private String userName;
 
+	private static final String HOST_NAME = "localhost";
+	private static final int PORT_NUMBER = 4009;
+
+	private ObjectInputStream inputStream; // to server
+	private ObjectOutputStream outputStream; // from server
+	private Socket clientSocket;
+
 	public static void main(String[] args) {
-		JFrame gui = new ChatClientGUI();
+		JFrame gui = new ChatClientGUI(null); // null?? or clientSocket
 		gui.setVisible(true);
 	}
 
-	public ChatClientGUI() {
+	public ChatClientGUI(Socket socketFromServer) {
+		// sockets
+		clientSocket = socketFromServer;
+
+		// GUI
 		layoutView();
 		setUpListeners();
 	}
@@ -115,5 +131,41 @@ public class ChatClientGUI extends JFrame {
 
 		}
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Runnable#run()
+	 */
+	@Override
+	public void run() {
+		// set input / output streams
+		try {
+			inputStream = new ObjectInputStream(clientSocket.getInputStream());
+			outputStream = new ObjectOutputStream(
+					clientSocket.getOutputStream());
+		} catch (IOException e) {
+			System.out
+					.println("Exception thrown while obtaining input & output streams");
+			e.printStackTrace();
+		}
+
+		// stay connected
+		while (true) {
+			
+			if (true) // want to end connection
+				break;
+		}
+
+		// close connection
+		try {
+			clientSocket.close();
+			inputStream.close();
+			outputStream.close();
+		} catch (IOException e) {
+			System.out.println("Exception thrown trying to close connection");
+			e.printStackTrace();
+		}
 	}
 }
