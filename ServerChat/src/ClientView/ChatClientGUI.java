@@ -36,31 +36,28 @@ public class ChatClientGUI extends JFrame implements Runnable {
 
 	private String userName;
 
-	private static final String HOST_NAME = "localhost";
-	private static final int PORT_NUMBER = 4009;
-
 	private ObjectInputStream inputStream; // to server
 	private ObjectOutputStream outputStream; // from server
 	private Socket clientSocket;
 	private Vector<String> sharedCollectionReference;
 
-	private boolean firstTimeOpening = true;
-
 	public static void main(String[] args) {
 		String IPAdress = "localhost";
 		int port = 4009;
 		Socket server = null;
-		
+
 		try {
 			server = new Socket(IPAdress, port);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		try{
-			ObjectOutputStream output = new ObjectOutputStream(server.getOutputStream());
-			ObjectInputStream input = new ObjectInputStream(server.getInputStream());
+
+		try {
+			ObjectOutputStream output = new ObjectOutputStream(
+					server.getOutputStream());
+			ObjectInputStream input = new ObjectInputStream(
+					server.getInputStream());
 			output.writeObject("Hi, Server!");
 			try {
 				Object x = input.readObject();
@@ -69,58 +66,20 @@ public class ChatClientGUI extends JFrame implements Runnable {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		
-		
-		
-		
-		try {
-			JFrame gui = new ChatClientGUI(new Socket(HOST_NAME, PORT_NUMBER), null);
-			gui.setVisible(true);
-
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		JFrame gui = new ChatClientGUI();
+		gui.setVisible(true);
 
 	}
 
-	public ChatClientGUI(Socket socketFromServer, Vector<String> sharedCollectionReference1) {
-		
-//		  try {
-//			 	s = new Socket("localhost", 4009);
-//			 	
-//			 	Object OutputStream oos = ...
-//			Object InputStream ios = ...
-//			  }
-//			  catch (UnknownHostException e) {
-//			  
-//			  e.printStackTrace();
-//			  } catch (IOException e) {
-//			  
-//			 
-//			  
-//			  
-//			  
-//			 
-//			  e.printStackTrace();
-//		
-		// sockets
-		clientSocket = socketFromServer;
-		sharedCollectionReference = sharedCollectionReference1;
+	public ChatClientGUI() {
 
-		// GUI
-		if (firstTimeOpening) {
-			layoutView();
-			setUpListeners();
-			firstTimeOpening = false;
-		}
+		layoutView();
+		setUpListeners();
+
 	}
 
 	/**
@@ -240,7 +199,7 @@ public class ChatClientGUI extends JFrame implements Runnable {
 			try {
 				String message = (String) inputStream.readObject();
 				chatArea.append(message);
-								
+
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -248,7 +207,7 @@ public class ChatClientGUI extends JFrame implements Runnable {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			if (true) // want to end connection
 				break;
 		}
@@ -269,10 +228,4 @@ public class ChatClientGUI extends JFrame implements Runnable {
 /**
  * 
  */
-
-
-
-
-
-
 
