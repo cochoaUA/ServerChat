@@ -12,9 +12,8 @@
  |
  *===========================================================================*/
 
-
-
 package Server;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -43,7 +42,7 @@ public class Server implements Runnable {
 
 		try {
 			myServerSocket = new ServerSocket(PORT_NUMBER);
-			
+
 		} catch (IOException e) {
 			System.out.println("In Server.Server() (the constructor)");
 			e.printStackTrace();
@@ -51,115 +50,115 @@ public class Server implements Runnable {
 
 	}
 
-	
 	/**
-	 * public void print()
-	 * loop through vectorandprint
+	 * public void print() loop through vectorandprint
 	 */
 	@Override
 	public void run() {
 		try {
+
 			while (true) {
-				Socket intoServer = myServerSocket.accept(); //use this socket object to talk to client socket that represents that client
-				
-				ObjectOutputStream oos = new ObjectOutputStream(intoServer.getOutputStream()); //Output before Input stream.
-				ObjectInputStream ois = new ObjectInputStream(intoServer.getInputStream()); //that socket has input/output stream to send things between each other.
-				Object text;
-				try {
-					text = ois.readObject();
-					oos.writeObject("You said: " + text);
-//					intoServer.close();
-//					oos.close();
-//					ois.close();
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				
-//				connectedClients.add(new Liason(ois, oos);
-				//do stuff
-//				oos.writeObject("dsadsa");
-//				Object x = ois.readObject();
-				
-//				s.close();
-//				oos.close();
-//				ois.close();
-				
-//				ChatClientGUI aThreadForOneClient = new ChatClientGUI(
-//						intoServer, connectedClients);
-//
-//				Thread thread = new Thread(aThreadForOneClient);
-//				thread.start();
+				Socket intoServer = myServerSocket.accept(); // use this socket
+																// object to
+																// talk to
+																// client socket
+																// that
+																// represents
+																// that client
+
+				Liason oneUser = new Liason(intoServer, connectedClients);
+				new Thread(oneUser).start();
+
 			}
 		} catch (IOException e) {
 			System.out.println("In Server.run");
 			e.printStackTrace();
 		}
 	}
-	
+
 	private class Liason extends Thread {
-		
-		public Liason(ObjectInputStream ois, ObjectOutputStream oos) {
-			
+		private Socket intoServer;
+		private Vector<String> connectedClients;
+
+		private ObjectOutputStream oos;
+		private ObjectInputStream ois;
+
+		public Liason(Socket socketFromServer, Vector<String> connectedClients) {
+			intoServer = socketFromServer;
+			this.connectedClients = connectedClients;
+			// this.connectedClients.add(this);
+
+			try {
+				// that socket has input/output stream to send things between
+				// each other.
+				oos = new ObjectOutputStream(intoServer.getOutputStream());
+				ois = new ObjectInputStream(intoServer.getInputStream());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		
+
 		public void run() {
-			
+
+			try {
+				while (true) {
+					Object text;
+					text = ois.readObject();
+					if (text.toString().indexOf("disconnected") > 0){
+						break;
+					}
+					oos.writeObject("You said: " + text + "\n");
+				}
+			} catch (IOException e1) {
+				// try {
+				// intoServer.close();
+				// oos.close();
+				// ois.close();
+				// } catch (IOException e) {
+				// e.printStackTrace();
+				// }
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
 		}
 	}
-	
+
 	/**
-	 * private class Liason extends Thread {
-	 * public Liason(ObjectInputStream ois, ObjectOutputStrea oos)
+	 * private class Liason extends Thread { public Liason(ObjectInputStream
+	 * ois, ObjectOutputStrea oos)
 	 * 
-	 * public void run()  {
-	 * try {
-	 * oos.writeObject("FDSD");
-	 * }catch(IOException e) {
-	 * oos.close();
-	 * ois.close();
-	 * clients.remove(this);
-	 * }
+	 * public void run() { try { oos.writeObject("FDSD"); }catch(IOException e)
+	 * { oos.close(); ois.close(); clients.remove(this); }
 	 * 
 	 * 
-	 *
+	 * 
 	 * }
 	 */
-	
-	//-------------------------------------------
-	
+
+	// -------------------------------------------
+
 	/**
 	 * public class Clients {
 	 * 
-	 * public static void main(String [] args) {
-	 * }
+	 * public static void main(String [] args) { }
 	 * 
 	 * Socket s;
 	 * 
 	 * public Client() {
-	 * 	
 	 * 
-	 * try {
-	 *	s = new Socket("localhost", 4009);
-	 *	Object InputStream ios = ...
-	 *	Object OutputStream oos = ...
-	 * }
-	 * catch (UnknownHostException e) {
 	 * 
-	 * e.printStackTrace();
-	 * } catch (IOException e) {
+	 * try { s = new Socket("localhost", 4009); Object InputStream ios = ...
+	 * Object OutputStream oos = ... } catch (UnknownHostException e) {
+	 * 
+	 * e.printStackTrace(); } catch (IOException e) {
 	 * 
 	 * 
 	 * 
 	 * 
 	 * 
-	 *
-	 * e.printStackTrace();
-	 * }
+	 * 
+	 * e.printStackTrace(); }
 	 * 
 	 */
-	
-	
 
 }

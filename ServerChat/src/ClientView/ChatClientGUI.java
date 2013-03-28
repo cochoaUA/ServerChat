@@ -75,7 +75,9 @@ public class ChatClientGUI extends JFrame implements Runnable {
 		// TODO 1:46:48 PM complete this method
 		GetUserNameListener listener1 = new GetUserNameListener();
 		messageField.addActionListener(listener1);
-
+		
+		MyWindowListener window = new MyWindowListener();
+		this.addWindowListener(window);
 	}
 
 	/**
@@ -222,8 +224,8 @@ public class ChatClientGUI extends JFrame implements Runnable {
 	public void run() {
 		// set input / output streams
 		try {
-			inputStream = new ObjectInputStream(server.getInputStream());
 			outputStream = new ObjectOutputStream(server.getOutputStream());
+			inputStream = new ObjectInputStream(server.getInputStream());
 		} catch (IOException e) {
 			System.out
 					.println("Exception thrown while obtaining input & output streams");
@@ -234,9 +236,15 @@ public class ChatClientGUI extends JFrame implements Runnable {
 		while (true) {
 
 			try {
+//				outputStream = new ObjectOutputStream(server.getOutputStream());
+//				inputStream = new ObjectInputStream(server.getInputStream());
+				
 				String message = inputStream.readObject().toString();
 				chatArea.append(message);
 				System.out.println(message);
+				
+//				inputStream.close();
+//				outputStream.close();
 
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
