@@ -26,7 +26,7 @@ import ClientView.ChatClientGUI;
 public class Server implements Runnable {
 
 	ServerSocket myServerSocket;
-	Vector<String> connectedClients;
+	Vector<Liason> connectedClients;
 
 	public final static int PORT_NUMBER = 4009;
 
@@ -38,7 +38,7 @@ public class Server implements Runnable {
 	}
 
 	public Server(int port) {
-		connectedClients = new Vector<String>();
+		connectedClients = new Vector<Liason>();
 
 		try {
 			myServerSocket = new ServerSocket(PORT_NUMBER);
@@ -67,6 +67,7 @@ public class Server implements Runnable {
 																// that client
 
 				Liason oneUser = new Liason(intoServer, connectedClients);
+				connectedClients.add(oneUser);
 				new Thread(oneUser).start();
 
 			}
@@ -78,12 +79,12 @@ public class Server implements Runnable {
 
 	private class Liason extends Thread {
 		private Socket intoServer;
-		private Vector<String> connectedClients;
+		private Vector<Liason> connectedClients;
 
 		private ObjectOutputStream oos;
 		private ObjectInputStream ois;
 
-		public Liason(Socket socketFromServer, Vector<String> connectedClients) {
+		public Liason(Socket socketFromServer, Vector<Liason> connectedClients) {
 			intoServer = socketFromServer;
 			this.connectedClients = connectedClients;
 			// this.connectedClients.add(this);
@@ -98,25 +99,37 @@ public class Server implements Runnable {
 			}
 		}
 
+		public ObjectOutputStream getOutputStream() {
+			return oos;
+		}
+
 		public void run() {
 
 			try {
 				while (true) {
 					Object text;
 					text = ois.readObject();
-					if (text.toString().indexOf("disconnected") > 0){
+					if (text.toString().indexOf("disconnected") > 0) {
+						connectedClients.remove(this);
+						for (Liason liason : connectedClients) {
+							liason.getOutputStream().writeObject(text + "\n");
+						}
 						break;
 					}
-					oos.writeObject("You said: " + text + "\n");
+					for (Liason liason : connectedClients) {
+						liason.getOutputStream().writeObject(text + "\n");
+					}
 				}
 			} catch (IOException e1) {
-				// try {
-				// intoServer.close();
-				// oos.close();
-				// ois.close();
-				// } catch (IOException e) {
-				// e.printStackTrace();
-				// }
+				try {
+					intoServer.close();
+					oos.close();
+					ois.close();
+				} catch (IOException e) {
+					System.out.println("server");
+
+					e.printStackTrace();
+				}
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}

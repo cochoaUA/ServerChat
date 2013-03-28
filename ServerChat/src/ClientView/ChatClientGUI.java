@@ -241,16 +241,15 @@ public class ChatClientGUI extends JFrame implements Runnable {
 				
 				String message = inputStream.readObject().toString();
 				chatArea.append(message);
-				System.out.println(message);
 				
 //				inputStream.close();
 //				outputStream.close();
 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				System.out.println("Client");
+
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
