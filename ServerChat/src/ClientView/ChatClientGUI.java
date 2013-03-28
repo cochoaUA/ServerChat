@@ -27,6 +27,7 @@ import java.net.SocketException;
 import java.util.Vector;
 
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -99,7 +100,9 @@ public class ChatClientGUI extends JFrame implements Runnable {
 		chatArea.setLineWrap(true);
 		chatArea.setWrapStyleWord(true);
 		chatArea.setEditable(false);
-		getContentPane().add(chatArea, BorderLayout.CENTER);
+		
+		JScrollPane scroll = new JScrollPane(chatArea);
+		getContentPane().add(scroll, BorderLayout.CENTER);
 
 	}
 
@@ -242,6 +245,8 @@ public class ChatClientGUI extends JFrame implements Runnable {
 
 				String message = inputStream.readObject().toString();
 				chatArea.append(message);
+				// set scroll to max -- auto scroll to bottom
+				chatArea.setCaretPosition(chatArea.getDocument().getLength());
 
 			} catch (SocketException closed) {
 				// nothing to worry about... trust me... im serious!
