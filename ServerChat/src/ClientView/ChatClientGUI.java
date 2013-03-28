@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -75,7 +76,7 @@ public class ChatClientGUI extends JFrame implements Runnable {
 		// TODO 1:46:48 PM complete this method
 		GetUserNameListener listener1 = new GetUserNameListener();
 		messageField.addActionListener(listener1);
-		
+
 		MyWindowListener window = new MyWindowListener();
 		this.addWindowListener(window);
 	}
@@ -236,18 +237,19 @@ public class ChatClientGUI extends JFrame implements Runnable {
 		while (true) {
 
 			try {
-//				outputStream = new ObjectOutputStream(server.getOutputStream());
-//				inputStream = new ObjectInputStream(server.getInputStream());
-				
+				// outputStream = new
+				// ObjectOutputStream(server.getOutputStream());
+				// inputStream = new ObjectInputStream(server.getInputStream());
+
 				String message = inputStream.readObject().toString();
 				chatArea.append(message);
-				
-//				inputStream.close();
-//				outputStream.close();
 
+				// inputStream.close();
+				// outputStream.close();
+			} catch (SocketException closed) {
+				// nothing to worry about... trust me... im serious!
 			} catch (IOException e) {
-				System.out.println("Client");
-
+				System.out.println("Client Exception");
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
