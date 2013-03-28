@@ -1,4 +1,4 @@
-/*=============================================================================
+/**=============================================================================
  | Assignment: Program #5
  | Authors: Carlton Ochoa (cochoa@email.arizona.edu)
  | 			Haziel Zuniga (zuniga7@email.arizona.edu)
@@ -51,7 +51,7 @@ public class Server implements Runnable {
 	}
 
 	/**
-	 * public void print() loop through vectorandprint
+	 * public void print() loop through vector and print
 	 */
 	@Override
 	public void run() {
@@ -87,7 +87,6 @@ public class Server implements Runnable {
 		public Liason(Socket socketFromServer, Vector<Liason> connectedClients) {
 			intoServer = socketFromServer;
 			this.connectedClients = connectedClients;
-			// this.connectedClients.add(this);
 
 			try {
 				// that socket has input/output stream to send things between
@@ -99,6 +98,12 @@ public class Server implements Runnable {
 			}
 		}
 
+		/**
+		 * gives us the ability to get the output stream for this liason (which
+		 * will help us send messages to all the other liasons)
+		 * 
+		 * @return ObjectOutputStream
+		 */
 		public ObjectOutputStream getOutputStream() {
 			return oos;
 		}
@@ -109,69 +114,36 @@ public class Server implements Runnable {
 				while (true) {
 					Object text;
 					text = ois.readObject();
+					// if they closed the stream -- send they disconnected
+					// message
 					if (text.toString().indexOf("disconnected") > 0) {
 						connectedClients.remove(this);
 						for (Liason liason : connectedClients) {
 							liason.getOutputStream().writeObject(text + "\n");
 						}
+						// close the now unnecessary streams
+						try {
+							intoServer.close();
+							oos.close();
+							ois.close();
+						} catch (IOException e) {
+							System.out.println("server");
+							e.printStackTrace();
+						}
 						break;
 					}
+					// send messages to all the other liasons
 					for (Liason liason : connectedClients) {
 						liason.getOutputStream().writeObject(text + "\n");
 					}
 				}
 			} catch (IOException e1) {
-				try {
-					intoServer.close();
-					oos.close();
-					ois.close();
-				} catch (IOException e) {
-					System.out.println("server");
+				e1.printStackTrace();
 
-					e.printStackTrace();
-				}
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-
-	/**
-	 * private class Liason extends Thread { public Liason(ObjectInputStream
-	 * ois, ObjectOutputStrea oos)
-	 * 
-	 * public void run() { try { oos.writeObject("FDSD"); }catch(IOException e)
-	 * { oos.close(); ois.close(); clients.remove(this); }
-	 * 
-	 * 
-	 * 
-	 * }
-	 */
-
-	// -------------------------------------------
-
-	/**
-	 * public class Clients {
-	 * 
-	 * public static void main(String [] args) { }
-	 * 
-	 * Socket s;
-	 * 
-	 * public Client() {
-	 * 
-	 * 
-	 * try { s = new Socket("localhost", 4009); Object InputStream ios = ...
-	 * Object OutputStream oos = ... } catch (UnknownHostException e) {
-	 * 
-	 * e.printStackTrace(); } catch (IOException e) {
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * e.printStackTrace(); }
-	 * 
-	 */
 
 }

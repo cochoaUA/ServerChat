@@ -1,3 +1,17 @@
+/**=============================================================================
+ | Assignment: Program #5
+ | Authors: Carlton Ochoa (cochoa@email.arizona.edu)
+ | 			Haziel Zuniga (zuniga7@email.arizona.edu)
+ |
+ | Grader: Rohit
+ | Course: 335
+ | Instructor: R. Mercer
+ | Due Date: Tuesday April 2, 2013 at 3:00
+ |
+ | Description: This class simulates our chat client
+ |
+ *===========================================================================*/
+
 package ClientView;
 
 import java.awt.BorderLayout;
@@ -15,20 +29,6 @@ import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-
-/*=============================================================================
- | Assignment: Program #5
- | Authors: Carlton Ochoa (cochoa@email.arizona.edu)
- | 			Haziel Zuniga (zuniga7@email.arizona.edu)
- |
- | Grader: Rohit
- | Course: 335
- | Instructor: R. Mercer
- | Due Date: Tuesday April 2, 2013 at 3:00
- |
- | Description: This class simulates our chat client
- |
- *===========================================================================*/
 
 public class ChatClientGUI extends JFrame implements Runnable {
 
@@ -236,16 +236,13 @@ public class ChatClientGUI extends JFrame implements Runnable {
 		// stay connected
 		while (true) {
 
+			// just continually keep getting messages and append them to
+			// chatArea
 			try {
-				// outputStream = new
-				// ObjectOutputStream(server.getOutputStream());
-				// inputStream = new ObjectInputStream(server.getInputStream());
 
 				String message = inputStream.readObject().toString();
 				chatArea.append(message);
 
-				// inputStream.close();
-				// outputStream.close();
 			} catch (SocketException closed) {
 				// nothing to worry about... trust me... im serious!
 			} catch (IOException e) {
