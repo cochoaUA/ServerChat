@@ -68,9 +68,9 @@ public class Server implements Runnable {
 				try {
 					text = ois.readObject();
 					oos.writeObject("You said: " + text);
-					intoServer.close();
-					oos.close();
-					ois.close();
+//					intoServer.close();
+//					oos.close();
+//					ois.close();
 				} catch (ClassNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
