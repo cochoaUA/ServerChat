@@ -64,11 +64,18 @@ public class Server implements Runnable {
 				
 				ObjectOutputStream oos = new ObjectOutputStream(intoServer.getOutputStream()); //Output before Input stream.
 				ObjectInputStream ois = new ObjectInputStream(intoServer.getInputStream()); //that socket has input/output stream to send things between each other.
+				Object text;
+				try {
+					text = ois.readObject();
+					oos.writeObject("You said: " + text);
+					intoServer.close();
+					oos.close();
+					ois.close();
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
-				oos.writeObject("Hi");
-				intoServer.close();
-				oos.close();
-				ois.close();
 				
 //				connectedClients.add(new Liason(ois, oos);
 				//do stuff

@@ -61,6 +61,7 @@ public class ChatClientGUI extends JFrame implements Runnable {
 		try{
 			ObjectOutputStream output = new ObjectOutputStream(server.getOutputStream());
 			ObjectInputStream input = new ObjectInputStream(server.getInputStream());
+			output.writeObject("Hi, Server!");
 			try {
 				Object x = input.readObject();
 				System.out.println(x.toString());
