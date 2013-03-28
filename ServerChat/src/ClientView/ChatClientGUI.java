@@ -38,37 +38,10 @@ public class ChatClientGUI extends JFrame implements Runnable {
 
 	private ObjectInputStream inputStream; // to server
 	private ObjectOutputStream outputStream; // from server
-	private Socket clientSocket;
+	private Socket server = null;
 	private Vector<String> sharedCollectionReference;
 
 	public static void main(String[] args) {
-		String IPAdress = "localhost";
-		int port = 4009;
-		Socket server = null;
-
-		try {
-			server = new Socket(IPAdress, port);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		try {
-			ObjectOutputStream output = new ObjectOutputStream(
-					server.getOutputStream());
-			ObjectInputStream input = new ObjectInputStream(
-					server.getInputStream());
-			output.writeObject("Hi, Server!");
-			try {
-				Object x = input.readObject();
-				System.out.println(x.toString());
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
 		JFrame gui = new ChatClientGUI();
 		gui.setVisible(true);
@@ -77,9 +50,21 @@ public class ChatClientGUI extends JFrame implements Runnable {
 
 	public ChatClientGUI() {
 
+		String IPAddress = "localhost";
+		int port = 4009;
+
+		try {
+			server = new Socket(IPAddress, port);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// GUI stuff
 		layoutView();
 		setUpListeners();
 
+		new Thread(this).start();
 	}
 
 	/**
@@ -184,9 +169,8 @@ public class ChatClientGUI extends JFrame implements Runnable {
 	public void run() {
 		// set input / output streams
 		try {
-			inputStream = new ObjectInputStream(clientSocket.getInputStream());
-			outputStream = new ObjectOutputStream(
-					clientSocket.getOutputStream());
+			inputStream = new ObjectInputStream(server.getInputStream());
+			outputStream = new ObjectOutputStream(server.getOutputStream());
 		} catch (IOException e) {
 			System.out
 					.println("Exception thrown while obtaining input & output streams");
@@ -197,8 +181,13 @@ public class ChatClientGUI extends JFrame implements Runnable {
 		while (true) {
 
 			try {
-				String message = (String) inputStream.readObject();
+				String message = inputStream.readObject().toString();
 				chatArea.append(message);
+				System.out.println(message);
+
+				outputStream.writeObject("Hi, Server!");
+				Object x = inputStream.readObject();
+				System.out.println(x.toString());
 
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -215,7 +204,7 @@ public class ChatClientGUI extends JFrame implements Runnable {
 		// close connection
 		try {
 			outputStream.writeObject(userName + " has disconnected!");
-			clientSocket.close();
+			server.close();
 			inputStream.close();
 			outputStream.close();
 		} catch (IOException e) {
@@ -224,8 +213,3 @@ public class ChatClientGUI extends JFrame implements Runnable {
 		}
 	}
 }
-
-/**
- * 
- */
-
