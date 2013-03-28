@@ -47,6 +47,35 @@ public class ChatClientGUI extends JFrame implements Runnable {
 	private boolean firstTimeOpening = true;
 
 	public static void main(String[] args) {
+		String IPAdress = "localhost";
+		int port = 4009;
+		Socket server = null;
+		
+		try {
+			server = new Socket(IPAdress, port);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try{
+			ObjectOutputStream output = new ObjectOutputStream(server.getOutputStream());
+			ObjectInputStream input = new ObjectInputStream(server.getInputStream());
+			try {
+				Object x = input.readObject();
+				System.out.println(x.toString());
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+		
 		try {
 			JFrame gui = new ChatClientGUI(new Socket(HOST_NAME, PORT_NUMBER), null);
 			gui.setVisible(true);
@@ -62,6 +91,25 @@ public class ChatClientGUI extends JFrame implements Runnable {
 	}
 
 	public ChatClientGUI(Socket socketFromServer, Vector<String> sharedCollectionReference1) {
+		
+//		  try {
+//			 	s = new Socket("localhost", 4009);
+//			 	
+//			 	Object OutputStream oos = ...
+//			Object InputStream ios = ...
+//			  }
+//			  catch (UnknownHostException e) {
+//			  
+//			  e.printStackTrace();
+//			  } catch (IOException e) {
+//			  
+//			 
+//			  
+//			  
+//			  
+//			 
+//			  e.printStackTrace();
+//		
 		// sockets
 		clientSocket = socketFromServer;
 		sharedCollectionReference = sharedCollectionReference1;
@@ -216,3 +264,14 @@ public class ChatClientGUI extends JFrame implements Runnable {
 		}
 	}
 }
+
+/**
+ * 
+ */
+
+
+
+
+
+
+
