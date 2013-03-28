@@ -184,10 +184,7 @@ public class ChatClientGUI extends JFrame implements Runnable {
 				String message = inputStream.readObject().toString();
 				chatArea.append(message);
 				System.out.println(message);
-
-				outputStream.writeObject("Hi, Server!");
-				Object x = inputStream.readObject();
-				System.out.println(x.toString());
+				
 
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -197,7 +194,7 @@ public class ChatClientGUI extends JFrame implements Runnable {
 				e.printStackTrace();
 			}
 
-			if (true) // want to end connection
+			if (false) // want to end connection
 				break;
 		}
 
