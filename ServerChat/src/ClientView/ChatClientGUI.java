@@ -3,11 +3,12 @@ package ClientView;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -117,7 +118,7 @@ public class ChatClientGUI extends JFrame implements Runnable {
 
 			// write message to outputStream
 			try {
-				// outputStream.reset();
+				outputStream.reset();
 				outputStream.writeObject(userName + ": " + text);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -143,7 +144,7 @@ public class ChatClientGUI extends JFrame implements Runnable {
 
 			// write message to outputStream
 			try {
-				// outputStream.reset();
+				outputStream.reset();
 				outputStream.writeObject(userName + " has connected!");
 			} catch (IOException e) {
 				System.out.println("Error writing to outputStream");
@@ -156,6 +157,58 @@ public class ChatClientGUI extends JFrame implements Runnable {
 					.removeActionListener(messageField.getActionListeners()[0]);
 			messageField.addActionListener(listener);
 
+		}
+
+	}
+
+	private class MyWindowListener implements WindowListener {
+
+		@Override
+		public void windowActivated(WindowEvent arg0) {
+		}
+
+		@Override
+		public void windowClosed(WindowEvent arg0) {
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent
+		 * )
+		 */
+		@Override
+		public void windowClosing(WindowEvent arg0) {
+
+			// close connection
+			try {
+				outputStream.writeObject(userName + " has disconnected!");
+				server.close();
+				inputStream.close();
+				outputStream.close();
+			} catch (IOException e) {
+				System.out
+						.println("Exception thrown trying to close connection");
+				e.printStackTrace();
+			}
+
+		}
+
+		@Override
+		public void windowDeactivated(WindowEvent arg0) {
+		}
+
+		@Override
+		public void windowDeiconified(WindowEvent arg0) {
+		}
+
+		@Override
+		public void windowIconified(WindowEvent arg0) {
+		}
+
+		@Override
+		public void windowOpened(WindowEvent arg0) {
 		}
 
 	}
@@ -184,7 +237,6 @@ public class ChatClientGUI extends JFrame implements Runnable {
 				String message = inputStream.readObject().toString();
 				chatArea.append(message);
 				System.out.println(message);
-				
 
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -193,20 +245,7 @@ public class ChatClientGUI extends JFrame implements Runnable {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-			if (false) // want to end connection
-				break;
 		}
 
-		// close connection
-		try {
-			outputStream.writeObject(userName + " has disconnected!");
-			server.close();
-			inputStream.close();
-			outputStream.close();
-		} catch (IOException e) {
-			System.out.println("Exception thrown trying to close connection");
-			e.printStackTrace();
-		}
 	}
 }
